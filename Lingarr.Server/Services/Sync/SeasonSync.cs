@@ -74,7 +74,17 @@ public class SeasonSync : ISeasonSync
         
         var episodePathResult = await _sonarrService.GetEpisodePath(episode.Id);
         var normalizePath = _pathConversionService.NormalizePath(episodePathResult?.EpisodeFile.Path ?? string.Empty);
-        var seasonPath = Path.GetDirectoryName(normalizePath);
+
+        // Get the directory containing the episode file.
+        // Depending on the library structure, this may be the season folder directly (flat)
+        // or a per-episode subfolder one level deeper (eg. Season 1/S01E01/episode.mkv)
+        var episodeDir = Path.GetDirectoryName(normalizePath);
+        var normalizedShowPath = _pathConversionService.NormalizePath(show.Path).TrimEnd('/');
+        var seasonPath = Path.GetDirectoryName(episodeDir) is { } parent
+          && parent.TrimEnd('/') != normalizedShowPath
+          ? parent
+          : episodeDir;
+
         _logger.LogInformation("Syncing episode: {episode.Id} with Path: {seasonPath}", episode.Id, seasonPath);
 
         if (seasonPath != null)
