@@ -12,6 +12,7 @@ jobs:
         id: upstream
         run: |
           LATEST=$(gh api repos/lingarr-translate/lingarr/releases/latest --jq '.tag_name')
+          echo "latest release from upstream: $LATEST"
           echo "tag=$LATEST" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -20,6 +21,7 @@ jobs:
         id: current
         run: |
           EXISTS=$(gh api repos/${{ github.repository }}/releases/tags/${{ steps.upstream.outputs.tag }} --silent 2>/dev/null && echo "true" || echo "false")
+          echo "exists local release: $EXISTS"
           echo "exists=$EXISTS" >> $GITHUB_OUTPUT
 
       - name: Checkout fix/season-path-per-episode-folder-structure
