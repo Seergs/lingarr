@@ -7,6 +7,9 @@ on:
 jobs:
   check-and-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Get latest upstream release
         id: upstream
