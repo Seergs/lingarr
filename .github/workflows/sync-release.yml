@@ -23,9 +23,17 @@ jobs:
       - name: Check if we already published this version
         id: current
         run: |
-          EXISTS=$(gh api repos/${{ github.repository }}/releases/tags/${{ steps.upstream.outputs.tag }} --silent 2>/dev/null && echo "true" || echo "false")
-          echo "exists local release: $EXISTS"
-          echo "exists=$EXISTS" >> $GITHUB_OUTPUT
+          gh api repos/${{ github.repository }}/releases/tags/${{ steps.upstream.outputs.tag }} --silent
+          EXISTS=$?
+          if [ "$EXISTS" -eq 0 ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+          # EXISTS=$(gh api repos/${{ github.repository }}/releases/tags/${{ steps.upstream.outputs.tag }} --silent 2>/dev/null && echo "true" || echo "false")
+          # echo "exists local release: $EXISTS"
+          # echo "exists=$EXISTS" >> $GITHUB_OUTPUT
 
       - name: Checkout fix/season-path-per-episode-folder-structure
         if: steps.current.outputs.exists == 'false'
