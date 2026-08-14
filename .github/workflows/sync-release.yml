@@ -34,6 +34,8 @@ jobs:
           # EXISTS=$(gh api repos/${{ github.repository }}/releases/tags/${{ steps.upstream.outputs.tag }} --silent 2>/dev/null && echo "true" || echo "false")
           # echo "exists local release: $EXISTS"
           # echo "exists=$EXISTS" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout fix/season-path-per-episode-folder-structure
         if: steps.current.outputs.exists == 'false'
